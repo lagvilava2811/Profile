@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ჩვენ შესახებ | ვაკო ლაღვილავა — ციფრული სააგენტო</title>
+  <meta name="description" content="ვაკო ლაღვილავა და მისი გუნდი. ვინ ვართ ჩვენ, ჩვენი ფილოსოფია, მისია და ტექნოლოგიური სტანდარტები.">
+  
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+
+  <!-- Floating HUD Header -->
+  <header class="site-header">
+    <a href="index.html" class="brand-badge" data-cursor-text="მთავარი">
+      <div class="brand-logo-icon">VL</div>
+      <div class="brand-text">
+        <span class="brand-name">ვაკო ლაღვილავა</span>
+        <span class="brand-tagline">ციფრული სააგენტო</span>
+      </div>
+    </a>
+
+    <div class="hud-controls">
+      <nav class="nav-links-pill">
+        <a href="index.html" class="nav-pill-item">მთავარი</a>
+        <a href="services.html" class="nav-pill-item">სერვისები</a>
+        <a href="work.html" class="nav-pill-item">ნამუშევრები</a>
+        <a href="about.html" class="nav-pill-item active">ჩვენ შესახებ</a>
+        <a href="contact.html" class="nav-pill-item">კონტაქტი</a>
+      </nav>
+
+      <button class="hud-btn" id="mapBtn" aria-label="რუკა" data-cursor-text="რუკა">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+        </svg>
+      </button>
+
+      <button class="hud-btn" id="audioBtn" aria-label="ხმა" data-cursor-text="ხმა">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/>
+        </svg>
+      </button>
+
+      <button class="hud-btn" id="menuBtn" aria-label="მენიუ" data-cursor-text="მენიუ">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Interactive Map Modal -->
+  <div class="map-modal-backdrop" id="mapModal">
+    <div class="map-panel-card">
+      <div class="map-header">
+        <div class="map-title-group">
+          <span class="section-tag">ინტერაქტიული რუკა</span>
+          <h3>სააგენტოს სივრცე</h3>
+        </div>
+        <button class="modal-close-btn" id="mapCloseBtn">✕</button>
+      </div>
+      <div class="floor-plan-container">
+        <button class="floor-room" data-target-page="index.html" data-target-section="hero">
+          <span class="floor-room-code">00 • HERO</span>
+          <span class="floor-room-name">მთავარი კორიდორი</span>
+        </button>
+        <button class="floor-room" data-target-page="services.html">
+          <span class="floor-room-code">01 • STUDIO</span>
+          <span class="floor-room-name">სერვისები</span>
+        </button>
+        <button class="floor-room" data-target-page="work.html">
+          <span class="floor-room-code">03 • GALLERY</span>
+          <span class="floor-room-name">ნამუშევრები</span>
+        </button>
+        <button class="floor-room active-room" data-target-page="about.html">
+          <span class="floor-room-code">04 • TEAM</span>
+          <span class="floor-room-name">ჩვენ შესახებ</span>
+        </button>
+        <button class="floor-room" data-target-page="contact.html">
+          <span class="floor-room-code">05 • CONTACT</span>
+          <span class="floor-room-name">კონტაქტი</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Audio Panel -->
+  <div class="audio-panel-card" id="audioPanel">
+    <div class="audio-row">
+      <label for="muteCheckbox">ხმოვანი ეფექტები</label>
+      <input type="checkbox" id="muteCheckbox" checked style="accent-color: var(--accent);">
+    </div>
+    <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="0.5" class="audio-slider">
+  </div>
+
+  <!-- Mobile Drawer -->
+  <div class="menu-drawer-backdrop" id="menuDrawerBackdrop">
+    <div class="menu-drawer">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span class="brand-name" style="font-size: 1.4rem;">ვაკო ლაღვილავა</span>
+        <button id="menuCloseBtn" class="modal-close-btn">✕</button>
+      </div>
+      <div class="drawer-links">
+        <a href="index.html" class="drawer-nav-item">01. მთავარი</a>
+        <a href="services.html" class="drawer-nav-item">02. სერვისები</a>
+        <a href="work.html" class="drawer-nav-item">03. ნამუშევრები</a>
+        <a href="about.html" class="drawer-nav-item">04. ჩვენ შესახებ</a>
+        <a href="contact.html" class="drawer-nav-item">05. კონტაქტი</a>
+      </div>
+    </div>
+  </div>
+
+  <main class="main-wrapper">
+    <section class="section-container">
+      <div class="section-header reveal-fade-up">
+        <span class="section-tag">ჩვენი ამბავი • მისია & გუნდი</span>
+        <h1 class="section-title">ერთიანი გუნდი — სრული ციფრული ეკოსისტემა</h1>
+        <p class="section-desc">
+          "ჩვენ ვაშენებთ სრულ ციფრულ გადაწყვეტილებას იდეიდან დანერგვამდე — დიზაინი, კოდი, კონტენტი და ავტომატიზაცია ერთ ადგილას."
+        </p>
+      </div>
+
+      <!-- Founder & Manifesto Card -->
+      <div class="paper-card reveal-fade-up" style="padding: 48px; margin-bottom: 48px;">
+        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 40px; align-items: center;">
+          <div style="text-align: center;">
+            <div style="width: 160px; height: 160px; margin: 0 auto; background: #18181b; color: #fff; border-radius: var(--radius-sketch-1); border: 3px solid var(--border-ink); box-shadow: 6px 6px 0px var(--accent); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 4rem;">
+              VL
+            </div>
+            <h3 style="font-family: var(--font-display); font-size: 1.8rem; margin-top: 16px;">ვაკო ლაღვილავა</h3>
+            <p style="font-family: var(--font-hand); font-size: 1.15rem; color: var(--accent);">Creative Lead & Architect</p>
+          </div>
+
+          <div>
+            <span style="font-family: var(--font-hand); font-size: 1.3rem; color: var(--accent); font-weight: 700;">ჩვენი მიდგომა: Mechanics First</span>
+            <p style="font-size: 1.1rem; line-height: 1.7; color: var(--text-ink); margin-top: 10px;">
+              ჩვენი ფილოსოფია ეფუძნება პრინციპს: <strong>ჯერ მყარი მექანიკა, სისწრაფე და არქიტექტურა — შემდეგ მომხიბვლელი ანიმაცია და ვიზუალური მაგია.</strong>
+            </p>
+            <p style="font-size: 1.05rem; line-height: 1.7; color: var(--text-muted); margin-top: 12px;">
+              ჩვენ არ ვიყენებთ მზა შაბლონებს, WordPress-ს ან ზედმეტად გადატვირთულ ბილდერებს. ყველა პროექტი იწერება ხელით, რაც უზრუნველყოფს 60 FPS სისწრაფეს მობილურებზეც კი, უმაღლეს SEO ქულებს (Lighthouse 95+) და თქვენს ბრენდზე მორგებულ უნიკალურობას.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Team Members Grid -->
+      <div class="section-header reveal-fade-up" style="margin-top: 60px;">
+        <span class="section-tag">გუნდის წევრები & როლები</span>
+        <h2 class="section-title">ექსპერტები, რომლებიც ქმნიან თქვენს წარმატებას</h2>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;">
+        <div class="paper-card reveal-fade-up" style="padding: 28px;">
+          <div style="width: 52px; height: 52px; background: #18181b; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 1.4rem; margin-bottom: 14px;">
+            UI
+          </div>
+          <h4 style="font-family: var(--font-display); font-size: 1.45rem; margin-bottom: 4px;">UI/UX & Brand Identity</h4>
+          <p style="font-family: var(--font-hand); font-size: 1.05rem; color: var(--accent);">დიზაინერების გუნდი</p>
+          <p style="font-size: 0.92rem; color: var(--text-muted); line-height: 1.5; margin-top: 8px;">
+            მომხმარებლის ქცევაზე ორიენტირებული ინტერფეისები, ბრენდბუქი და მაღალკონვერსიული დიზაინ სისტემები.
+          </p>
+        </div>
+
+        <div class="paper-card reveal-fade-up delay-1" style="padding: 28px;">
+          <div style="width: 52px; height: 52px; background: var(--accent); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 1.4rem; margin-bottom: 14px;">
+            JS
+          </div>
+          <h4 style="font-family: var(--font-display); font-size: 1.45rem; margin-bottom: 4px;">Frontend & Creative Motion</h4>
+          <p style="font-family: var(--font-hand); font-size: 1.05rem; color: var(--accent);">დეველოპმენტის გუნდი</p>
+          <p style="font-size: 0.92rem; color: var(--text-muted); line-height: 1.5; margin-top: 8px;">
+            React, Next.js, WebGL, Three.js და GSAP ანიმაციები უნაკლო 60fps რენდერინგით.
+          </p>
+        </div>
+
+        <div class="paper-card reveal-fade-up delay-2" style="padding: 28px;">
+          <div style="width: 52px; height: 52px; background: #0ea5e9; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 1.4rem; margin-bottom: 14px;">
+            AI
+          </div>
+          <h4 style="font-family: var(--font-display); font-size: 1.45rem; margin-bottom: 4px;">AI Automation & Agents</h4>
+          <p style="font-family: var(--font-hand); font-size: 1.05rem; color: var(--accent);">ინტელექტუალური სისტემები</p>
+          <p style="font-size: 0.92rem; color: var(--text-muted); line-height: 1.5; margin-top: 8px;">
+            Custom AI ასისტენტები, მონაცემთა ექსტრაქცია, CRM სინქრონიზაცია და RAG არქიტექტურა.
+          </p>
+        </div>
+
+        <div class="paper-card reveal-fade-up delay-3" style="padding: 28px;">
+          <div style="width: 52px; height: 52px; background: #8b5cf6; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 1.4rem; margin-bottom: 14px;">
+            FX
+          </div>
+          <h4 style="font-family: var(--font-display); font-size: 1.45rem; margin-bottom: 4px;">Motion & Video Production</h4>
+          <p style="font-family: var(--font-hand); font-size: 1.05rem; color: var(--accent);">ვიდეო არტისტები</p>
+          <p style="font-size: 0.92rem; color: var(--text-muted); line-height: 1.5; margin-top: 8px;">
+            3D მოდელირება, პროდუქტის რენდერები, სარეკლამო ვიდეო რგოლები და Sound FX.
+          </p>
+        </div>
+      </div>
+
+      <!-- Values Badges -->
+      <div style="margin-top: 60px;" class="paper-card reveal-fade-up" style="padding: 36px; text-align: center;">
+        <h3 style="font-family: var(--font-display); font-size: 1.8rem; margin-bottom: 18px;">ჩვენი ტექნოლოგიური სტეკი & ხელსაწყოები</h3>
+        <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+          <span class="hero-sticker-badge">JavaScript / ES Modules</span>
+          <span class="hero-sticker-badge">React & Next.js</span>
+          <span class="hero-sticker-badge">GSAP & ScrollTrigger</span>
+          <span class="hero-sticker-badge">Three.js / WebGL</span>
+          <span class="hero-sticker-badge">Custom AI Agents (LLM API)</span>
+          <span class="hero-sticker-badge">Figma Design Systems</span>
+          <span class="hero-sticker-badge">Cinema 4D & Octane</span>
+          <span class="hero-sticker-badge">Google Search Console & GA4</span>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <h2>ვაკო ლაღვილავა</h2>
+        <p>სრული ციფრული გადაწყვეტილება იდეიდან დანერგვამდე.</p>
+      </div>
+      <div class="footer-links-group">
+        <h4>ნავიგაცია</h4>
+        <ul>
+          <li><a href="index.html" class="footer-link-item">მთავარი</a></li>
+          <li><a href="services.html" class="footer-link-item">სერვისები</a></li>
+          <li><a href="work.html" class="footer-link-item">ნამუშევრები</a></li>
+          <li><a href="about.html" class="footer-link-item">ჩვენ შესახებ</a></li>
+          <li><a href="contact.html" class="footer-link-item">კონტაქტი</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-signature">Coded from scratch with ❤️ by Vako Lagvilava Studio</div>
+      <div>© 2026 ყველა უფლება დაცულია.</div>
+    </div>
+  </footer>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

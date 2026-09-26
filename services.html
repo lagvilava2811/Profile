@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>სერვისები | ვაკო ლაღვილავა — ციფრული სააგენტო</title>
+  <meta name="description" content="ჩვენი 6 ძირითადი ციფრული სერვისი: ვებ და აპლიკაციების დეველოპმენტი, დიზაინი, თარგმნა, ვიდეო პროდუქცია, SEO და AI ავტომატიზაცია.">
+  
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+
+  <!-- Floating HUD Header -->
+  <header class="site-header">
+    <a href="index.html" class="brand-badge" data-cursor-text="მთავარი">
+      <div class="brand-logo-icon">VL</div>
+      <div class="brand-text">
+        <span class="brand-name">ვაკო ლაღვილავა</span>
+        <span class="brand-tagline">ციფრული სააგენტო</span>
+      </div>
+    </a>
+
+    <div class="hud-controls">
+      <nav class="nav-links-pill">
+        <a href="index.html" class="nav-pill-item">მთავარი</a>
+        <a href="services.html" class="nav-pill-item active">სერვისები</a>
+        <a href="work.html" class="nav-pill-item">ნამუშევრები</a>
+        <a href="about.html" class="nav-pill-item">ჩვენ შესახებ</a>
+        <a href="contact.html" class="nav-pill-item">კონტაქტი</a>
+      </nav>
+
+      <button class="hud-btn" id="mapBtn" aria-label="რუკა" data-cursor-text="რუკა">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+        </svg>
+      </button>
+
+      <button class="hud-btn" id="audioBtn" aria-label="ხმა" data-cursor-text="ხმა">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/>
+        </svg>
+      </button>
+
+      <button class="hud-btn" id="menuBtn" aria-label="მენიუ" data-cursor-text="მენიუ">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Interactive Map Modal -->
+  <div class="map-modal-backdrop" id="mapModal">
+    <div class="map-panel-card">
+      <div class="map-header">
+        <div class="map-title-group">
+          <span class="section-tag">ინტერაქტიული რუკა</span>
+          <h3>სააგენტოს სივრცე</h3>
+        </div>
+        <button class="modal-close-btn" id="mapCloseBtn">✕</button>
+      </div>
+      <div class="floor-plan-container">
+        <button class="floor-room" data-target-page="index.html" data-target-section="hero">
+          <span class="floor-room-code">00 • HERO</span>
+          <span class="floor-room-name">მთავარი კორიდორი</span>
+        </button>
+        <button class="floor-room active-room" data-target-page="services.html">
+          <span class="floor-room-code">01 • STUDIO</span>
+          <span class="floor-room-name">სერვისების დარბაზი</span>
+        </button>
+        <button class="floor-room" data-target-page="work.html">
+          <span class="floor-room-code">03 • GALLERY</span>
+          <span class="floor-room-name">ნამუშევრები</span>
+        </button>
+        <button class="floor-room" data-target-page="about.html">
+          <span class="floor-room-code">04 • TEAM</span>
+          <span class="floor-room-name">ჩვენ შესახებ</span>
+        </button>
+        <button class="floor-room" data-target-page="contact.html">
+          <span class="floor-room-code">05 • CONTACT</span>
+          <span class="floor-room-name">კონტაქტი & Quote</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Audio Panel -->
+  <div class="audio-panel-card" id="audioPanel">
+    <div class="audio-row">
+      <label for="muteCheckbox">ხმოვანი ეფექტები</label>
+      <input type="checkbox" id="muteCheckbox" checked style="accent-color: var(--accent);">
+    </div>
+    <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="0.5" class="audio-slider">
+  </div>
+
+  <!-- Mobile Menu Drawer -->
+  <div class="menu-drawer-backdrop" id="menuDrawerBackdrop">
+    <div class="menu-drawer">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span class="brand-name" style="font-size: 1.4rem;">ვაკო ლაღვილავა</span>
+        <button id="menuCloseBtn" class="modal-close-btn">✕</button>
+      </div>
+      <div class="drawer-links">
+        <a href="index.html" class="drawer-nav-item">01. მთავარი</a>
+        <a href="services.html" class="drawer-nav-item">02. სერვისები</a>
+        <a href="work.html" class="drawer-nav-item">03. ნამუშევრები</a>
+        <a href="about.html" class="drawer-nav-item">04. ჩვენ შესახებ</a>
+        <a href="contact.html" class="drawer-nav-item">05. კონტაქტი</a>
+      </div>
+    </div>
+  </div>
+
+  <main class="main-wrapper">
+    <section class="section-container">
+      <div class="section-header reveal-fade-up">
+        <span class="section-tag">სრული სერვისები • 6 მიმართულება</span>
+        <h1 class="section-title">ინდივიდუალური ციფრული გადაწყვეტილებები თქვენი ზრდისთვის</h1>
+        <p class="section-desc">
+          ჩვენ ვქმნით სრულ ციკლს იდეიდან ბაზრის ლიდერობამდე. გაეცანით თითოეული სერვისის დეტალურ სპეციფიკაციას, მიწოდებად კომპონენტებსა და ბიზნეს-სარგებელს:
+        </p>
+      </div>
+
+      <!-- Deep Dive 1: Web & App Dev -->
+      <div id="web-app-dev" class="paper-card reveal-fade-up" style="padding: 40px; margin-bottom: 36px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+          <span style="font-family: var(--font-display); font-size: 2.2rem; color: var(--accent);">01. ვებ და აპლიკაციების დეველოპმენტი</span>
+          <span class="service-badge">60 FPS & High-Load Architecture</span>
+        </div>
+        <p style="font-size: 1.15rem; color: var(--text-ink); margin-bottom: 24px; line-height: 1.6;">
+          საიტების, კომპლექსური ვებ აპლიკაციების, e-commerce პლატფორმების და custom სისტემების აშენება — დიზაინიდან სრულ დანერგვამდე. No WordPress, No templates.
+        </p>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+          <div style="background: #fbfbf9; border: 1.5px dashed var(--border-ink); border-radius: 8px; padding: 20px;">
+            <h4 style="font-family: var(--font-hand); font-size: 1.25rem; margin-bottom: 8px;">🎯 ვის სჭირდება:</h4>
+            <p style="font-size: 0.95rem; color: var(--text-muted); line-height: 1.5;">
+              ბიზნესებს, რომლებსაც სჭირდებათ მყარი და შთამბეჭდავი ონლაინ ყოფნა, ახალი პროდუქტის ციფრული ვერსია (MVP), ან არსებული ნელი სისტემის განახლება.
+            </p>
+          </div>
+          <div style="background: #fbfbf9; border: 1.5px dashed var(--border-ink); border-radius: 8px; padding: 20px;">
+            <h4 style="font-family: var(--font-hand); font-size: 1.25rem; margin-bottom: 8px;">💡 რატომ არის სასარგებლო:</h4>
+            <p style="font-size: 0.95rem; color: var(--text-muted); line-height: 1.5;">
+              კარგად აშენებული საიტი პირდაპირ ზრდის გაყიდვებს, ბრენდის ნდობას და ამცირებს bounce rate-ს. თქვენი ციფრული პროდუქტი მუშაობს როგორც საუკეთესო გაყიდვების მენეჯერი.
+            </p>
+          </div>
+        </div>
+        <div style="margin-top: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+          <div style="font-family: var(--font-hand); font-size: 1.1rem;">
+            ტექნოლოგიები: <strong>React, Next.js, Modern ES6+, GSAP, Node.js, WebGL</strong>
+          </div>
+          <a href="contact.html?service=web-dev" class="btn btn-primary btn-sm">ამ სერვისის დაჯავშნა →</a>
+        </div>
+      </div>
+
+      <!-- Deep Dive 2: Design & Branding -->
+      <div id="design-branding" class="paper-card reveal-fade-up" style="padding: 40px; margin-bottom: 36px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+          <span style="font-family: var(--font-display); font-size: 2.2rem; color: var(--accent);">02. დიზაინი & ბრენდინგი</span>
+          <span class="service-badge">Award-Grade UI/UX</span>
+        </div>
+        <p style="font-size: 1.15rem; color: var(--text-ink); margin-bottom: 24px; line-height: 1.6;">
+          UI/UX დიზაინი, ბრენდინგი (ლოგო, ვიზუალური იდენტობა, ფერთა სისტემა) და მაღალკონვერსიული მარკეტინგული მასალები.
+        </p>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+          <div style="background: #fbfbf9; border: 1.5px dashed var(--border-ink); border-radius: 8px; padding: 20px;">
+            <h4 style="font-family: var(--font-hand); font-size: 1.25rem; margin-bottom: 8px;">🎯 ვის სჭირდება:</h4>
+            <p style="font-size: 0.95rem; color: var(--text-muted); line-height: 1.5;">
+              ახალ ბიზნესებს, რომლებსაც სჭირდებათ ვიზუალური იდენტობა, ან არსებულ ბრენდებს, რომლებსაც სჭირდებათ განახლება და თანამედროვე იერსახე.
+            </p>
+          </div>
+          <div style="background: #fbfbf9; border: 1.5px dashed var(--border-ink); border-radius: 8px; padding: 20px;">
+            <h4 style="font-family: var(--font-hand); font-size: 1.25rem; margin-bottom: 8px;">💡 რატომ არის სასარგებლო:</h4>
+            <p style="font-size: 0.95rem; color: var(--text-muted); line-height: 1.5;">
+              კარგი დიზაინი ქმნის პირველ შთაბეჭდილებას და პროფესიონალიზმის შეგრძნებას — ამის გარეშე საუკეთესო პროდუქტიც კი "იაფად" გამოიყურება.
+            </p>
+          </div>
+        </div>
+        <div style="margin-top: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+          <div style="font-family: var(--font-hand); font-size: 1.1rem;">
+            ტექნოლოგიები: <strong>Figma, Interactive Prototyping, Design Systems, Vector Brandbook</strong>
+          </div>
+          <a href="contact.html?service=design" class="btn btn-primary btn-sm">ამ სერვისის დაჯავშნა →</a>
+        </div>
+      </div>
+
+      <!-- Deep Dive 3: Translation -->
+      <div id="translation-localization" class="paper-card reveal-fade-up" style="padding: 40px; margin-bottom: 36px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+          <span style="font-family: var(--font-display); font-size: 2.2rem; color: var(--accent);">03. თარგმნა & ლოკალიზაცია</span>
+          <span class="service-badge">Native Precision</span>
+        </div>
+        <p style="font-size: 1.15rem; color: var(--text-ink); margin-bottom: 24px; line-height: 1.6;">
+          ტექსტების, დოკუმენტების, საიტების/აპლიკაციების თარგმნა და კულტურული ლოკალიზაცია სხვადასხვა ენაზე.
+        </p>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+          <div style="background: #fbfbf9; border: 1.5px dashed var(--border-ink); border-radius: 8px; padding: 20px;">
+            <h4 style="font-family: var(--font-hand); font-size: 1.25rem; margin-bottom: 8px;">🎯 ვის სჭირდება:</h4>
+            <p style="font-size: 0.95rem; color: var(--text-muted); line-height: 1.5;">
+              ბიზნესებს, რომლებსაც სურთ ახალ ბაზარზე ან ენობრივ სეგმენტზე გასვლა.
+            </p>
+          </div>
+          <div style="background: #fbfbf9; border: 1.5px dashed var(--border-ink); border-radius: 8px; padding: 20px;">
+            <h4 style="font-family: var(--font-hand); font-size: 1.25rem; margin-bottom: 8px;">💡 რატომ არის სასარგებლო:</h4>
+            <p style="font-size: 0.95rem; color: var(--text-muted); line-height: 1.5;">
+              ზუსტი, ბუნებრივი თარგმანი (არა უბრალოდ სიტყვასიტყვითი) ზრდის ნდობასა და კონვერსიას უცხოენოვან აუდიტორიაში.
+            </p>
+          </div>
+        </div>
+        <div style="margin-top: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+          <div style="font-family: var(--font-hand); font-size: 1.1rem;">
+            მხარდაჭერილი: <strong>ქართული, ინგლისური, გერმანული, ფრანგული, ესპანური</strong>
+          </div>
+          <a href="contact.html?service=translation" class="btn btn-primary btn-sm">ამ სერვისის დაჯავშნა →</a>
+        </div>
+      </div>
+
+      <!-- Deep Dive 4: Video Production -->
+      <div id="video-production" class="paper-card reveal-fade-up" style="padding: 40px; margin-bottom: 36px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+          <span style="font-family: var(--font-display); font-size: 2.2rem; color: var(--accent);">04. ვიდეო პროდუქცია & Motion</span>
+          <span class="service-badge">High Engagement</span>
+        </div>
+        <p style="font-size: 1.15rem; color: var(--text-ink); margin-bottom: 24px; line-height: 1.6;">
+          ვიდეო მონტაჟი, სარეკლამო/მარკეტინგული ვიდეოები, ანიმაცია, 3D პროდუქტის რენდერი და motion graphics.
+        </p>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+          <div style="background: #fbfbf9; border: 1.5px dashed var(--border-ink); border-radius: 8px; padding: 20px;">
+            <h4 style="font-family: var(--font-hand); font-size: 1.25rem; margin-bottom: 8px;">🎯 ვის სჭირდება:</h4>
+            <p style="font-size: 0.95rem; color: var(--text-muted); line-height: 1.5;">
+              ბრენდებს, რომლებსაც სჭირდებათ ვიზუალური კონტენტი სოციალური მედიისთვის, რეკლამისთვის ან პროდუქტის პრეზენტაციისთვის.
+            </p>
+          </div>
+          <div style="background: #fbfbf9; border: 1.5px dashed var(--border-ink); border-radius: 8px; padding: 20px;">
+            <h4 style="font-family: var(--font-hand); font-size: 1.25rem; margin-bottom: 8px;">💡 რატომ არის სასარგებლო:</h4>
+            <p style="font-size: 0.95rem; color: var(--text-muted); line-height: 1.5;">
+              ვიდეო კონტენტს ყველაზე მაღალი engagement აქვს — ის უფრო სწრაფად გადმოსცემს ამბავს, ვიდრე ტექსტი ან სტატიკური სურათი.
+            </p>
+          </div>
+        </div>
+        <div style="margin-top: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+          <div style="font-family: var(--font-hand); font-size: 1.1rem;">
+            ტექნოლოგიები: <strong>Cinema 4D, After Effects, Sound FX, Color Grading, 4K & Reels</strong>
+          </div>
+          <a href="contact.html?service=video" class="btn btn-primary btn-sm">ამ სერვისის დაჯავშნა →</a>
+        </div>
+      </div>
+
+      <!-- Deep Dive 5: SEO & Marketing -->
+      <div id="seo-marketing" class="paper-card reveal-fade-up" style="padding: 40px; margin-bottom: 36px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+          <span style="font-family: var(--font-display); font-size: 2.2rem; color: var(--accent);">05. SEO და ციფრული მარკეტინგი</span>
+          <span class="service-badge">TOP 1 Google Ranking</span>
+        </div>
+        <p style="font-size: 1.15rem; color: var(--text-ink); margin-bottom: 24px; line-height: 1.6;">
+          საძიებო სისტემებში პოზიციების გაუმჯობესება, კონტენტ სტრატეგია, ტექნიკური აუდიტი და ანალიტიკა.
+        </p>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+          <div style="background: #fbfbf9; border: 1.5px dashed var(--border-ink); border-radius: 8px; padding: 20px;">
+            <h4 style="font-family: var(--font-hand); font-size: 1.25rem; margin-bottom: 8px;">🎯 ვის სჭირდება:</h4>
+            <p style="font-size: 0.95rem; color: var(--text-muted); line-height: 1.5;">
+              ბიზნესებს, რომლებსაც სურთ ორგანულად მოძებნონ ახალი კლიენტები Google-ში (რეკლამის დამატებითი ხარჯების გარეშე).
+            </p>
+          </div>
+          <div style="background: #fbfbf9; border: 1.5px dashed var(--border-ink); border-radius: 8px; padding: 20px;">
+            <h4 style="font-family: var(--font-hand); font-size: 1.25rem; margin-bottom: 8px;">💡 რატომ არის სასარგებლო:</h4>
+            <p style="font-size: 0.95rem; color: var(--text-muted); line-height: 1.5;">
+              SEO გრძელვადიან, მდგრად ტრაფიკს/კლიენტებს მოაქვს — ერთხელ ჩადებული სამუშაო აგრძელებს შედეგის მოტანას თვეების/წლების განმავლობაში.
+            </p>
+          </div>
+        </div>
+        <div style="margin-top: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+          <div style="font-family: var(--font-hand); font-size: 1.1rem;">
+            ინსტრუმენტები: <strong>Technical Audit, Google Search Console, Schema.org, High-Intent Mapping</strong>
+          </div>
+          <a href="contact.html?service=seo" class="btn btn-primary btn-sm">ამ სერვისის დაჯავშნა →</a>
+        </div>
+      </div>
+
+      <!-- Deep Dive 6: AI Automation -->
+      <div id="ai-automation" class="paper-card reveal-fade-up" style="padding: 40px; margin-bottom: 36px; border-color: var(--accent); box-shadow: 6px 6px 0px var(--accent);">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+          <span style="font-family: var(--font-display); font-size: 2.2rem; color: var(--accent);">06. AI-Powered ავტომატიზაცია და კვლევა</span>
+          <span class="service-badge" style="background: var(--accent); color: #fff;">Autonomous Multi-Agent</span>
+        </div>
+        <p style="font-size: 1.15rem; color: var(--text-ink); margin-bottom: 24px; line-height: 1.6;">
+          Custom AI აგენტების აწყობა კონკრეტული ბიზნეს ამოცანებისთვის — მომხმარებელთა მხარდაჭერის ავტომატიზაცია, დოკუმენტების/ანგარიშების ავტომატური მომზადება, ღრმა კვლევა, მონაცემთა ანალიზი, workflow ავტომატიზაცია (ფორმების შევსება, CRM განახლება და ა.შ.), ინტეგრაცია არსებულ სისტემებში.
+        </p>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+          <div style="background: #fbfbf9; border: 1.5px dashed var(--border-ink); border-radius: 8px; padding: 20px;">
+            <h4 style="font-family: var(--font-hand); font-size: 1.25rem; margin-bottom: 8px;">🎯 ვის სჭირდება:</h4>
+            <p style="font-size: 0.95rem; color: var(--text-muted); line-height: 1.5;">
+              ბიზნესებს, რომლებსაც აქვთ განმეორებადი, დროში ხანგრძლივი ამოცანები (მონაცემების დამუშავება, კვლევა, კონტენტის მომზადება), რომელთა ავტომატიზაციაც დროსა და ხარჯებს დაზოგავს.
+            </p>
+          </div>
+          <div style="background: #fbfbf9; border: 1.5px dashed var(--border-ink); border-radius: 8px; padding: 20px;">
+            <h4 style="font-family: var(--font-hand); font-size: 1.25rem; margin-bottom: 8px;">💡 რატომ არის სასარგებლო:</h4>
+            <p style="font-size: 0.95rem; color: var(--text-muted); line-height: 1.5;">
+              სწორად აწყობილი AI ავტომატიზაცია ამცირებს ხელით შესრულებულ რუტინულ სამუშაოს, აჩქარებს გადაწყვეტილების მიღებას და აძლევს გუნდს საშუალებას ფოკუსირდეს მაღალი ღირებულების ამოცანებზე.
+            </p>
+          </div>
+        </div>
+        <div style="margin-top: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+          <div style="font-family: var(--font-hand); font-size: 1.1rem;">
+            ტექნოლოგიები: <strong>Custom Agents, LLM Orchestration, RAG, Webhooks, CRM Sync</strong>
+          </div>
+          <a href="contact.html?service=ai-automation" class="btn btn-primary btn-sm">ამ სერვისის დაჯავშნა →</a>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <h2>ვაკო ლაღვილავა</h2>
+        <p>სრული ციფრული გადაწყვეტილება იდეიდან დანერგვამდე.</p>
+      </div>
+      <div class="footer-links-group">
+        <h4>ნავიგაცია</h4>
+        <ul>
+          <li><a href="index.html" class="footer-link-item">მთავარი</a></li>
+          <li><a href="services.html" class="footer-link-item">სერვისები</a></li>
+          <li><a href="work.html" class="footer-link-item">ნამუშევრები</a></li>
+          <li><a href="about.html" class="footer-link-item">ჩვენ შესახებ</a></li>
+          <li><a href="contact.html" class="footer-link-item">კონტაქტი</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-signature">Coded from scratch with ❤️ by Vako Lagvilava Studio</div>
+      <div>© 2026 ყველა უფლება დაცულია.</div>
+    </div>
+  </footer>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

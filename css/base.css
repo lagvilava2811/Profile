@@ -1,0 +1,217 @@
+/* css/base.css - დიზაინ ტოკენები, ტიპოგრაფია, ქაღალდის ტექსტურა და reset */
+
+@import url('https://fonts.googleapis.com/css2?family=Cabin+Sketch:wght@400;700&family=Caveat:wght@400;600;700&family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+Georgian:wght@400;500;600;700;800&family=Patrick+Hand&display=swap');
+
+@font-face {
+  font-family: 'Cabin Sketch';
+  src: url('../assets/fonts/CabinSketch-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Cabin Sketch';
+  src: url('../assets/fonts/CabinSketch-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+:root {
+  /* ფერთა პალიტრა - itomdev.com ესთეტიკა */
+  --bg-paper: #f8f6f0;
+  --bg-paper-pure: #ffffff;
+  --bg-paper-warm: #f2efe6;
+  --bg-card: #ffffff;
+  --bg-paper-dark: #1e1e24;
+  
+  --text-ink: #141416;
+  --text-ink-soft: #27272a;
+  --text-muted: #52525b;
+  --text-subtle: #71717a;
+  
+  /* აქცენტი */
+  --accent: #6366f1;
+  --accent-hover: #4f46e5;
+  --accent-light: #eef2ff;
+  --accent-amber: #f59e0b;
+  --accent-teal: #0ea5e9;
+
+  /* კონტურები */
+  --border-ink: #18181b;
+  --border-sketch-width: 2px;
+  --border-sketch: 2px solid var(--border-ink);
+  --border-dashed: 2px dashed #a1a1aa;
+  
+  /* ტიპოგრაფია */
+  --font-display: 'Cabin Sketch', 'Noto Sans Georgian', cursive, sans-serif;
+  --font-hand: 'Caveat', 'Patrick Hand', 'Noto Sans Georgian', cursive, sans-serif;
+  --font-body: 'Inter', 'Noto Sans Georgian', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-accent: 'Patrick Hand', 'Noto Sans Georgian', cursive, sans-serif;
+  
+  /* ჩრდილები და ტექსტურები */
+  --shadow-sketch: 4px 4px 0px rgba(24, 24, 27, 0.95);
+  --shadow-sketch-lg: 6px 6px 0px rgba(24, 24, 27, 0.95);
+  --shadow-paper: 0 10px 30px -5px rgba(24, 24, 27, 0.08), 0 4px 12px rgba(0, 0, 0, 0.05);
+  --shadow-hover: 6px 6px 0px rgba(99, 102, 241, 0.9);
+  
+  /* ესკიზური Border-Radius */
+  --radius-sketch-1: 255px 15px 225px 15px/15px 225px 15px 255px;
+  --radius-sketch-2: 20px 255px 20px 255px/255px 20px 255px 20px;
+  --radius-sketch-btn: 2px 255px 3px/255px 5px 225px 3px;
+  --radius-tag: 255px 12px 225px 10px/10px 225px 12px 255px;
+  
+  /* Torn paper პოლიგონი (itomdev signature clip-path) */
+  --torn-clip: polygon(
+    0% 0%, 100% 0%, 98% 10%, 100% 20%, 97% 35%, 100% 50%, 
+    98% 65%, 100% 80%, 97% 90%, 100% 100%, 90% 97%, 80% 100%, 
+    70% 96%, 60% 100%, 50% 97%, 40% 100%, 30% 96%, 20% 100%, 
+    10% 97%, 0% 100%, 2% 90%, 0% 80%, 3% 65%, 0% 50%, 
+    2% 35%, 0% 20%, 3% 10%, 0% 0%
+  );
+  
+  --torn-clip-subtle: polygon(
+    0% 0%, 100% 0%, 99% 15%, 100% 30%, 99% 45%, 100% 60%, 
+    99% 75%, 100% 90%, 99% 100%, 85% 99%, 70% 100%, 55% 99%, 
+    40% 100%, 25% 99%, 10% 100%, 0% 99%, 1% 85%, 0% 70%, 
+    1% 55%, 0% 40%, 1% 25%, 0% 10%
+  );
+
+  --z-hud: 100;
+  --z-modal: 150;
+  --z-cursor: 9999;
+  --z-preloader: 10000;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (max-width: 768px) {
+  html {
+    font-size: 14.5px;
+  }
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--bg-paper);
+  background-image: url('../assets/textures/paper-texture.webp');
+  background-repeat: repeat;
+  background-size: 400px;
+  color: var(--text-ink);
+  line-height: 1.65;
+  overflow-x: hidden;
+  position: relative;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ქაღალდის ფონის დამატებითი ორგანული შრე */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at 15% 15%, rgba(255,255,255,0.6) 0%, transparent 60%),
+              radial-gradient(circle at 85% 85%, rgba(0,0,0,0.02) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+::selection {
+  background-color: var(--text-ink);
+  color: #ffffff;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+button {
+  background: none;
+  border: none;
+  font-family: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+img, video, svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* Custom Sketched Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-paper);
+  border-left: 1px dashed #cbd5e1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #27272a;
+  border-radius: var(--radius-sketch-btn);
+  border: 2px solid var(--bg-paper);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+/* დამხმარე კლასები */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.handwritten {
+  font-family: var(--font-hand);
+}
+
+.display-sketch {
+  font-family: var(--font-display);
+  letter-spacing: 1px;
+}
+
+.torn-paper {
+  clip-path: var(--torn-clip);
+  position: relative;
+}
+
+.paper-card {
+  background-color: var(--bg-paper-pure);
+  background-image: url('../assets/textures/paper-texture.webp');
+  background-size: cover;
+  border: var(--border-sketch);
+  border-radius: var(--radius-sketch-1);
+  box-shadow: var(--shadow-sketch);
+  position: relative;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.paper-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+}
