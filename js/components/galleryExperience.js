@@ -5,11 +5,13 @@
 // infinite horizontal scroll, and torn-paper inspection modal.
 
 import { soundEngine } from './audioManager.js';
+import { localizeProject } from './languageSwitcher.js';
 
 export class GalleryExperience {
   constructor(containerId, projectsData) {
     this.container = document.getElementById(containerId);
-    this.projects = projectsData || [];
+    this.sourceProjects = projectsData || [];
+    this.projects = this.sourceProjects.map(localizeProject);
     this.scrollX = 0;
     this.targetScrollX = 0;
     this.isDragging = false;
@@ -111,6 +113,11 @@ export class GalleryExperience {
     this.renderHangingCards();
     this.setupEvents();
     this.startLoop();
+    window.addEventListener('profilelanguagechange', () => {
+      this.projects = this.sourceProjects.map(localizeProject);
+      this.closeProjectModal();
+      this.renderHangingCards();
+    });
   }
 
   renderHangingCards() {

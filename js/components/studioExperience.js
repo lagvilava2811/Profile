@@ -5,11 +5,13 @@
 // click-to-zoom with spotlight glow, and authentic torn-paper service detail card.
 
 import { soundEngine } from './audioManager.js';
+import { localizeService } from './languageSwitcher.js';
 
 export class StudioExperience {
   constructor(containerId, servicesData) {
     this.container = document.getElementById(containerId);
-    this.services = servicesData || [];
+    this.sourceServices = servicesData || [];
+    this.services = this.sourceServices.map(localizeService);
     this.scrollY = 0;
     this.targetScrollY = 0;
     this.isDragging = false;
@@ -90,6 +92,11 @@ export class StudioExperience {
     this.renderMonitors();
     this.setupInteractions();
     this.startRenderLoop();
+    window.addEventListener('profilelanguagechange', () => {
+      this.services = this.sourceServices.map(localizeService);
+      if (this.isZoomed) this.closeInspect();
+      this.renderMonitors();
+    });
   }
 
   renderMonitors() {
