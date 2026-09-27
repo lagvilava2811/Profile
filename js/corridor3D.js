@@ -25,7 +25,7 @@ export class Corridor3D {
     this.minZ = -27.5;
     this.maxZ = this.initialCameraZ;
     this.loopStartZ = 14.5;
-    this.loopEndZ = -26.5;
+    this.loopEndZ = -27.35;
     
     // Entrance Double Doors State
     this.isEntranceOpen = false;
@@ -1013,7 +1013,8 @@ export class Corridor3D {
       { id: 'services', name: 'THE STUDIO', geoTitle: 'სერვისები', z: -6.0, wall: 'right', texSketch: 'drzwisocial.webp', texPainted: 'drzwisocial_painted.webp' },
       { id: 'work', name: 'THE GALLERY', geoTitle: 'პორტფოლიო', z: -13.0, wall: 'left', texSketch: 'drzwiprojekty.webp', texPainted: 'drzwiprojekty_painted.webp' },
       { id: 'ai-lab', name: 'AI LAB', geoTitle: 'AI აგენტები', z: -20.0, wall: 'right', texSketch: 'drzwisocial.webp', texPainted: 'drzwisocial_painted.webp' },
-      { id: 'contact', name: 'LET\'S CONNECT', geoTitle: 'კონტაქტი', z: -26.0, wall: 'right', texSketch: 'drzwikontakt.webp', texPainted: 'drzwikontakt_painted.webp' }
+      { id: 'contact', name: 'LET\'S CONNECT', geoTitle: 'კონტაქტი', z: -26.0, wall: 'left', texSketch: 'drzwikontakt.webp', texPainted: 'drzwikontakt_painted.webp' },
+      { id: 'loop', name: 'START AGAIN', geoTitle: 'თავიდან', z: -29.98, wall: 'back', texSketch: 'drzwikontakt.webp', texPainted: 'drzwikontakt_painted.webp' }
     ];
 
     doorConfigs.forEach(conf => {
@@ -1333,7 +1334,11 @@ export class Corridor3D {
 
       // Check corridor door clicked
       if (this.hoveredDoor) {
-        this.enterRoom(this.hoveredDoor);
+        if (this.hoveredDoor.userData.id === 'loop') {
+          this.restartCorridorLoop();
+        } else {
+          this.enterRoom(this.hoveredDoor);
+        }
       }
     });
 
@@ -1619,14 +1624,54 @@ export class Corridor3D {
     // Walking past the last side door starts the corridor again at its entrance.
     // Resetting both values keeps the loop responsive instead of easing into a wall.
     if (deltaZ < 0 && nextZ < this.loopEndZ) {
-      this.targetCameraZ = this.loopStartZ;
-      this.cameraZ = this.loopStartZ;
-      this.camera.position.z = this.loopStartZ;
-      soundEngine.playPaperRustle();
+      this.restartCorridorLoop();
       return;
     }
 
     this.targetCameraZ = Math.max(this.loopEndZ, Math.min(this.loopStartZ, nextZ));
+  }
+
+  restartCorridorLoop() {
+    if (this.isTransitioning || this.isInsideRoom) return;
+
+    const loopDoor = this.doors.find(door => door.userData.id === 'loop');
+    if (!loopDoor) {
+      this.targetCameraZ = this.loopStartZ;
+      this.cameraZ = this.loopStartZ;
+      this.camera.position.z = this.loopStartZ;
+      return;
+    }
+
+    this.isTransitioning = true;
+    soundEngine.playDoorOpen();
+    const startTime = performance.now();
+    const duration = 520;
+
+    const restartStep = (now) => {
+      const progress = Math.min((now - startTime) / duration, 1);
+      const ease = 1 - Math.pow(1 - progress, 3);
+      if (loopDoor.userData.handlePivot) {
+        loopDoor.userData.handlePivot.rotation.z = 0.45 * ease;
+      }
+      if (loopDoor.userData.hingePivot) {
+        loopDoor.userData.hingePivot.rotation.y = -Math.PI * 0.78 * ease;
+      }
+
+      if (progress < 1) {
+        requestAnimationFrame(restartStep);
+        return;
+      }
+
+      this.targetCameraZ = this.loopStartZ;
+      this.cameraZ = this.loopStartZ;
+      this.camera.position.z = this.loopStartZ;
+      if (loopDoor.userData.handlePivot) loopDoor.userData.handlePivot.rotation.z = 0;
+      if (loopDoor.userData.hingePivot) loopDoor.userData.hingePivot.rotation.y = 0;
+      this.isTransitioning = false;
+      soundEngine.playPaperRustle();
+    };
+
+    requestAnimationFrame(restartStep);
   }
 
   teleportToRoom(roomId) {
