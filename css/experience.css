@@ -8,6 +8,10 @@
 .hint-arrow { display: none !important; }
 .hud-btn { border-radius: 0; clip-path: var(--torn-clip-subtle); }
 
+.corridor-hint-badge {
+  display: none !important;
+}
+
 .language-switcher {
   position: relative;
 }

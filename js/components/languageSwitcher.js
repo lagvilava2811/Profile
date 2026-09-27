@@ -124,6 +124,56 @@ function translateVisiblePage(language) {
   });
 }
 
+let translating = false;
+let translationTimer = null;
+
+async function translateBatch(texts, language) {
+  const marker = '\n⟪PROFILE_SPLIT⟫\n';
+  const query = texts.join(marker);
+  const url = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl='
+    + language + '&dt=t&q=' + encodeURIComponent(query);
+  const response = await fetch(url);
+  if (!response.ok) throw new Error('Translation request failed');
+  const data = await response.json();
+  return data[0].map((part) => part[0]).join('').split(marker);
+}
+
+async function translateAllContent(language) {
+  if (language === 'ka' || translating) return;
+  translating = true;
+
+  try {
+    const elements = [...document.querySelectorAll('body *')].filter((element) => {
+      return !element.children.length
+        && !element.closest('.language-switcher')
+        && !['SCRIPT', 'STYLE', 'SVG', 'PATH'].includes(element.tagName);
+    });
+    const items = elements.map((element) => {
+      const source = originalText.get(element) || element.textContent.trim();
+      originalText.set(element, source);
+      return { element, source };
+    }).filter((item) => item.source);
+
+    for (let index = 0; index < items.length; index += 12) {
+      const batch = items.slice(index, index + 12);
+      const translated = await translateBatch(batch.map((item) => item.source), language);
+      batch.forEach((item, itemIndex) => {
+        if (translated[itemIndex]) item.element.textContent = translated[itemIndex];
+      });
+    }
+  } catch (error) {
+    console.warn('Some page text could not be translated.', error);
+  } finally {
+    translating = false;
+  }
+}
+
+function scheduleFullTranslation() {
+  if (currentLanguage === 'ka') return;
+  clearTimeout(translationTimer);
+  translationTimer = setTimeout(() => translateAllContent(currentLanguage), 450);
+}
+
 function applyLanguage(language) {
   const dictionary = translations[language] || translations.ka;
   currentLanguage = language;
@@ -149,6 +199,7 @@ function applyLanguage(language) {
   updateCorridorHint(corridorState);
   localStorage.setItem('profile-language', language);
   window.dispatchEvent(new CustomEvent('profilelanguagechange', { detail: { language } }));
+  scheduleFullTranslation();
 }
 
 function updateCorridorHint(state) {
@@ -190,6 +241,10 @@ export function initLanguageSwitcher() {
   });
 
   window.setLocalizedCorridorHint = updateCorridorHint;
+  const observer = new MutationObserver(() => {
+    if (!translating) scheduleFullTranslation();
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
 }
 
 export function localizeService(service) {

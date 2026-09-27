@@ -17,7 +17,7 @@ import { GalleryExperience } from './components/galleryExperience.js?v=20260927_
 import { StudioExperience } from './components/studioExperience.js?v=20260927_04';
 import { AboutExperience } from './components/aboutExperience.js?v=20260927_02';
 import { ContactExperience } from './components/contactExperience.js?v=20260927_02';
-import { initLanguageSwitcher } from './components/languageSwitcher.js?v=20260927_04';
+import { initLanguageSwitcher } from './components/languageSwitcher.js?v=20260927_05';
 
 let galleryExp = null;
 let studioExp = null;
