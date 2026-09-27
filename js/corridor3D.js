@@ -2,7 +2,7 @@
 // itomdev.com-ის ავთენტური 3D ხელნაკეთი გამოცდილება (Vako Lagvilava | Digital Agency)
 // ზუსტი პროპორციები: Wide Perspective Entrance (z = 32.5), Double Doors,
 // Window Avatar with smooth peek-out hover & Cat with pointer-tracking pupils, Hanging Sign & Tree,
-// Corridor 20 FPS Flipbook Animated Boy (ვაკო ლაღვილავა) with Pass-Through Evasion & Floating Splitting 3D Title,
+// Corridor 20 FPS Flipbook Animated Boy (ვაკო ლაგვილავა) with Pass-Through Evasion & Floating Splitting 3D Title,
 // pustatabliczka.webp Wooden Signboards, Hinged Corridor Doors with Painted Hover & Audio Transitions.
 
 import { soundEngine } from './components/audioManager.js';
@@ -24,6 +24,8 @@ export class Corridor3D {
     this.targetCameraZ = this.initialCameraZ;
     this.minZ = -27.5;
     this.maxZ = this.initialCameraZ;
+    this.loopStartZ = 14.5;
+    this.loopEndZ = -26.5;
     
     // Entrance Double Doors State
     this.isEntranceOpen = false;
@@ -533,7 +535,7 @@ export class Corridor3D {
 
     // Speech bubble for duck easter egg quotes
     const entranceBubbleData = this.createSpeechBubbleTexture([
-      "გამარჯობა! მე ვარ ვაკო ლაღვილავა 👋",
+      "გამარჯობა! მე ვარ ვაკო ლაგვილავა 👋",
       "Creative Lead & Digital Agency",
       "დაასქროლეთ ↕ ან შეაღეთ კარები 🚪"
     ]);
@@ -969,7 +971,7 @@ export class Corridor3D {
         "It works on my machine! 🤷‍♂️"
       ],
       [
-        "გამარჯობა! მე ვარ ვაკო ლაღვილავა 👋",
+        "გამარჯობა! მე ვარ ვაკო ლაგვილავა 👋",
         "Creative Lead & Digital Agency",
         "დაასქროლეთ ↕ ან შეაღეთ კარები 🚪"
       ],
@@ -1011,7 +1013,7 @@ export class Corridor3D {
       { id: 'services', name: 'THE STUDIO', geoTitle: 'სერვისები', z: -6.0, wall: 'right', texSketch: 'drzwisocial.webp', texPainted: 'drzwisocial_painted.webp' },
       { id: 'work', name: 'THE GALLERY', geoTitle: 'პორტფოლიო', z: -13.0, wall: 'left', texSketch: 'drzwiprojekty.webp', texPainted: 'drzwiprojekty_painted.webp' },
       { id: 'ai-lab', name: 'AI LAB', geoTitle: 'AI აგენტები', z: -20.0, wall: 'right', texSketch: 'drzwisocial.webp', texPainted: 'drzwisocial_painted.webp' },
-      { id: 'contact', name: 'LET\'S CONNECT', geoTitle: 'კონტაქტი', z: -27.0, wall: 'back', texSketch: 'drzwikontakt.webp', texPainted: 'drzwikontakt_painted.webp' }
+      { id: 'contact', name: 'LET\'S CONNECT', geoTitle: 'კონტაქტი', z: -26.0, wall: 'right', texSketch: 'drzwikontakt.webp', texPainted: 'drzwikontakt_painted.webp' }
     ];
 
     doorConfigs.forEach(conf => {
@@ -1234,8 +1236,7 @@ export class Corridor3D {
         return;
       }
 
-      this.targetCameraZ -= e.deltaY * 0.012;
-      this.targetCameraZ = Math.max(this.minZ, Math.min(14.5, this.targetCameraZ));
+      this.moveAlongCorridor(-e.deltaY * 0.012);
       soundEngine.playPencilScratch();
     }, { passive: true });
 
@@ -1252,8 +1253,7 @@ export class Corridor3D {
       const deltaY = e.touches[0].clientY - touchStartY;
       touchStartY = e.touches[0].clientY;
 
-      this.targetCameraZ += deltaY * 0.03;
-      this.targetCameraZ = Math.max(this.minZ, Math.min(14.5, this.targetCameraZ));
+      this.moveAlongCorridor(deltaY * 0.03);
     }, { passive: true });
 
     // 3. Keyboard Arrow Keys / WASD
@@ -1267,10 +1267,10 @@ export class Corridor3D {
         return;
       }
       if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
-        this.targetCameraZ = Math.max(this.minZ, this.targetCameraZ - 1.5);
+        this.moveAlongCorridor(-1.5);
         soundEngine.playPencilScratch();
       } else if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') {
-        this.targetCameraZ = Math.min(14.5, this.targetCameraZ + 1.5);
+        this.moveAlongCorridor(1.5);
         soundEngine.playPencilScratch();
       }
     });
@@ -1611,6 +1611,22 @@ export class Corridor3D {
       }
     };
     requestAnimationFrame(resetStep);
+  }
+
+  moveAlongCorridor(deltaZ) {
+    const nextZ = this.targetCameraZ + deltaZ;
+
+    // Walking past the last side door starts the corridor again at its entrance.
+    // Resetting both values keeps the loop responsive instead of easing into a wall.
+    if (deltaZ < 0 && nextZ < this.loopEndZ) {
+      this.targetCameraZ = this.loopStartZ;
+      this.cameraZ = this.loopStartZ;
+      this.camera.position.z = this.loopStartZ;
+      soundEngine.playPaperRustle();
+      return;
+    }
+
+    this.targetCameraZ = Math.max(this.loopEndZ, Math.min(this.loopStartZ, nextZ));
   }
 
   teleportToRoom(roomId) {
