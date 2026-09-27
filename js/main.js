@@ -1,7 +1,7 @@
 // js/main.js
 // მთავარი აპლიკაციის ორკესტრატორი და ინიციალიზატორი (itomdev 3D გამოცდილება)
 
-import { Corridor3D } from './corridor3D.js?v=20260927_02';
+import { Corridor3D } from './corridor3D.js?v=20260927_04';
 import { soundEngine } from './components/audioManager.js';
 import { initCustomCursor } from './components/cursor.js';
 import { initScrollReveal } from './components/scrollReveal.js';
@@ -13,11 +13,11 @@ import { initBeforeAfter } from './components/beforeAfter.js';
 import { initAIDemo } from './components/aiDemo.js';
 import { servicesData } from './data/services.js';
 import { projectsData } from './data/projects.js';
-import { GalleryExperience } from './components/galleryExperience.js?v=20260927_02';
-import { StudioExperience } from './components/studioExperience.js?v=20260927_02';
+import { GalleryExperience } from './components/galleryExperience.js?v=20260927_04';
+import { StudioExperience } from './components/studioExperience.js?v=20260927_04';
 import { AboutExperience } from './components/aboutExperience.js?v=20260927_02';
 import { ContactExperience } from './components/contactExperience.js?v=20260927_02';
-import { initLanguageSwitcher } from './components/languageSwitcher.js?v=20260927_03';
+import { initLanguageSwitcher } from './components/languageSwitcher.js?v=20260927_04';
 
 let galleryExp = null;
 let studioExp = null;
