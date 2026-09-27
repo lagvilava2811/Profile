@@ -1,3 +1,5 @@
+import { staticTranslations } from './staticTranslations.js?v=20260927_06';
+
 const translations = {
   ka: {
     label: 'ქა',
@@ -88,7 +90,19 @@ const pageTranslations = {
     'თქვენი სახელი / კომპანია:': 'Your name / company:',
     'ელექტრონული ფოსტა:': 'Email address:',
     'პროექტის მოკლე აღწერა:': 'Short project description:',
-    'მოთხოვნის გაგზავნა & შეფასების მიღება ⚡': 'Send request & get an estimate ⚡'
+    'მოთხოვნის გაგზავნა & შეფასების მიღება ⚡': 'Send request & get an estimate ⚡',
+    'რას ვაკეთებთ:': 'What we do:',
+    'ვის სჭირდება:': 'Who needs it:',
+    'რატომ არის სასარგებლო:': 'Why it is useful:',
+    'რას მიიღებთ (Deliverables):': 'What you receive (deliverables):',
+    'პროექტის დაწყება →': 'Start a project →',
+    'ჩატვირთვის დრო: 0.4s': 'Load time: 0.4s',
+    'გაყიდვების ზრდა: 3.8x': 'Sales growth: 3.8x',
+    'პასუხის სიჩქარე: 1.2s': 'Response time: 1.2s',
+    'ორგანული ნახვები: 2.4M': 'Organic views: 2.4M',
+    'ლოკალიზებული ენები: 4 ენა': 'Localized languages: 4',
+    'ორგანული ზრდა: +410%': 'Organic growth: +410%',
+    'Case Study-ს ნახვა →': 'View case study →'
   },
   ru: {
     'ვაკო ლაგვილავა და გუნდი': 'Вако Лагвилава и команда',
@@ -110,68 +124,32 @@ const pageTranslations = {
     'თქვენი სახელი / კომპანია:': 'Ваше имя / компания:',
     'ელექტრონული ფოსტა:': 'Электронная почта:',
     'პროექტის მოკლე აღწერა:': 'Краткое описание проекта:',
-    'მოთხოვნის გაგზავნა & შეფასების მიღება ⚡': 'Отправить запрос и получить оценку ⚡'
+    'მოთხოვნის გაგზავნა & შეფასების მიღება ⚡': 'Отправить запрос и получить оценку ⚡',
+    'რას ვაკეთებთ:': 'Что мы делаем:',
+    'ვის სჭირდება:': 'Кому это нужно:',
+    'რატომ არის სასარგებლო:': 'Почему это полезно:',
+    'რას მიიღებთ (Deliverables):': 'Что вы получите:',
+    'პროექტის დაწყება →': 'Начать проект →',
+    'ჩატვირთვის დრო: 0.4s': 'Время загрузки: 0,4 с',
+    'გაყიდვების ზრდა: 3.8x': 'Рост продаж: 3,8x',
+    'პასუხის სიჩქარე: 1.2s': 'Скорость ответа: 1,2 с',
+    'ორგანული ნახვები: 2.4M': 'Органические просмотры: 2,4 млн',
+    'ლოკალიზებული ენები: 4 ენა': 'Локализованные языки: 4',
+    'ორგანული ზრდა: +410%': 'Органический рост: +410%',
+    'Case Study-ს ნახვა →': 'Посмотреть кейс →'
   }
 };
 
 function translateVisiblePage(language) {
+  const catalog = { ...staticTranslations[language], ...pageTranslations[language] };
   document.querySelectorAll('body *').forEach((element) => {
-    if (element.children.length || ['SCRIPT', 'STYLE'].includes(element.tagName)) return;
+    if (element.children.length || element.closest('.language-switcher') || ['SCRIPT', 'STYLE'].includes(element.tagName)) return;
     const source = originalText.get(element) || element.textContent.trim();
     if (!source) return;
     originalText.set(element, source);
-    element.textContent = pageTranslations[language]?.[source] || source;
+    const translated = catalog[source] || source;
+    if (element.textContent.trim() !== translated) element.textContent = translated;
   });
-}
-
-let translating = false;
-let translationTimer = null;
-
-async function translateBatch(texts, language) {
-  const marker = '\n⟪PROFILE_SPLIT⟫\n';
-  const query = texts.join(marker);
-  const url = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl='
-    + language + '&dt=t&q=' + encodeURIComponent(query);
-  const response = await fetch(url);
-  if (!response.ok) throw new Error('Translation request failed');
-  const data = await response.json();
-  return data[0].map((part) => part[0]).join('').split(marker);
-}
-
-async function translateAllContent(language) {
-  if (language === 'ka' || translating) return;
-  translating = true;
-
-  try {
-    const elements = [...document.querySelectorAll('body *')].filter((element) => {
-      return !element.children.length
-        && !element.closest('.language-switcher')
-        && !['SCRIPT', 'STYLE', 'SVG', 'PATH'].includes(element.tagName);
-    });
-    const items = elements.map((element) => {
-      const source = originalText.get(element) || element.textContent.trim();
-      originalText.set(element, source);
-      return { element, source };
-    }).filter((item) => item.source);
-
-    for (let index = 0; index < items.length; index += 12) {
-      const batch = items.slice(index, index + 12);
-      const translated = await translateBatch(batch.map((item) => item.source), language);
-      batch.forEach((item, itemIndex) => {
-        if (translated[itemIndex]) item.element.textContent = translated[itemIndex];
-      });
-    }
-  } catch (error) {
-    console.warn('Some page text could not be translated.', error);
-  } finally {
-    translating = false;
-  }
-}
-
-function scheduleFullTranslation() {
-  if (currentLanguage === 'ka') return;
-  clearTimeout(translationTimer);
-  translationTimer = setTimeout(() => translateAllContent(currentLanguage), 450);
 }
 
 function applyLanguage(language) {
@@ -199,7 +177,6 @@ function applyLanguage(language) {
   updateCorridorHint(corridorState);
   localStorage.setItem('profile-language', language);
   window.dispatchEvent(new CustomEvent('profilelanguagechange', { detail: { language } }));
-  scheduleFullTranslation();
 }
 
 function updateCorridorHint(state) {
@@ -241,8 +218,13 @@ export function initLanguageSwitcher() {
   });
 
   window.setLocalizedCorridorHint = updateCorridorHint;
+  let pendingRefresh = null;
   const observer = new MutationObserver(() => {
-    if (!translating) scheduleFullTranslation();
+    if (currentLanguage === 'ka' || pendingRefresh) return;
+    pendingRefresh = window.setTimeout(() => {
+      pendingRefresh = null;
+      translateVisiblePage(currentLanguage);
+    }, 0);
   });
   observer.observe(document.body, { childList: true, subtree: true });
 }
