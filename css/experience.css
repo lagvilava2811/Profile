@@ -7,6 +7,55 @@
 }
 .hint-arrow { display: none !important; }
 .hud-btn { border-radius: 0; clip-path: var(--torn-clip-subtle); }
+
+.language-switcher {
+  position: relative;
+}
+
+.language-toggle {
+  min-width: 48px;
+  padding: 0 9px;
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+}
+
+.language-menu {
+  position: absolute;
+  top: calc(100% + 9px);
+  right: 0;
+  z-index: calc(var(--z-modal) + 2);
+  min-width: 138px;
+  padding: 7px;
+  background: var(--bg-paper-pure);
+  background-image: url('../assets/textures/paper-texture.webp');
+  border: var(--border-sketch);
+  box-shadow: 4px 4px 0 rgba(24, 24, 27, 0.9);
+  clip-path: var(--torn-clip-subtle);
+}
+
+.language-menu[hidden] {
+  display: none;
+}
+
+.language-menu button {
+  display: block;
+  width: 100%;
+  padding: 8px 10px;
+  border: 0;
+  background: transparent;
+  color: var(--text-ink);
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--font-hand);
+  font-size: 0.98rem;
+}
+
+.language-menu button:hover,
+.language-menu button.active {
+  background: rgba(99, 102, 241, 0.14);
+  color: var(--accent);
+}
 .gallery-exp-scene, .studio-exp-scene, .about-exp-scene { background: #f8f8f8; }
 .gallery-city-bg, .gallery-rooftops-bg { left: -100%; right: -100%; }
 .gallery-city-bg { bottom: 25%; height: 30%; opacity: .55; }

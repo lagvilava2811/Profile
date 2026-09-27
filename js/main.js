@@ -17,6 +17,7 @@ import { GalleryExperience } from './components/galleryExperience.js?v=20260927_
 import { StudioExperience } from './components/studioExperience.js?v=20260927_02';
 import { AboutExperience } from './components/aboutExperience.js?v=20260927_02';
 import { ContactExperience } from './components/contactExperience.js?v=20260927_02';
+import { initLanguageSwitcher } from './components/languageSwitcher.js?v=20260927_03';
 
 let galleryExp = null;
 let studioExp = null;
@@ -24,6 +25,8 @@ let aboutExp = null;
 let contactExp = null;
 
 document.addEventListener('DOMContentLoaded', () => {
+  initLanguageSwitcher();
+
   // 1. Paper Tear Preloader
   initPaperTearPreloader();
 

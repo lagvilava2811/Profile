@@ -1416,8 +1416,12 @@ export class Corridor3D {
         this.introSubMeshes.forEach(item => { item.mesh.visible = true; });
         this.doodleMeshes.forEach(item => { item.mesh.visible = true; });
         if (this.doorwayBackingMesh) this.doorwayBackingMesh.visible = false;
-        const hintEl = document.getElementById('corridorHintText');
-        if (hintEl) hintEl.textContent = 'დაასქროლეთ კორიდორის დასათვალიერებლად ↕';
+        if (window.setLocalizedCorridorHint) {
+          window.setLocalizedCorridorHint('corridor');
+        } else {
+          const hintEl = document.getElementById('corridorHintText');
+          if (hintEl) hintEl.textContent = 'დაასქროლეთ კორიდორის დასათვალიერებლად ↕';
+        }
       }
     };
 
