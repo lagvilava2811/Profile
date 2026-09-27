@@ -49,6 +49,7 @@ export class StudioExperience {
         <!-- Spotlight Backdrop (Visible during zoom inspect - media_1789629752335.png) -->
         <div class="studio-spotlight-backdrop" id="studioSpotlight"></div>
 
+        <div class="studio-selected-monitor" id="studioSelectedMonitor" aria-hidden="true"></div>
         <!-- Bottom Explorer Banner -->
         <div class="studio-bottom-banner" id="studioBottomBanner">
           <div class="studio-banner-box">
@@ -108,12 +109,12 @@ export class StudioExperience {
     }
 
     this.totalItems = items.length;
-    this.itemHeight = 220; // px spacing per level
-    this.cylinderRadius = 420; // 3D cylinder radius
+    this.itemHeight = 145;
+    this.cylinderRadius = 260;
 
     track.innerHTML = items.map((item, i) => {
       // Cylindrical coordinates: angles spiral down
-      const angle = (i * 55) * (Math.PI / 180);
+      const angle = (i * 60) * (Math.PI / 180);
       const x = Math.sin(angle) * this.cylinderRadius;
       const z = Math.cos(angle) * this.cylinderRadius - this.cylinderRadius;
       const rotY = (angle * 180 / Math.PI);
@@ -123,12 +124,16 @@ export class StudioExperience {
       const mType = monitorTypes[i % monitorTypes.length];
 
       return `
-        <div class="studio-monitor-item type-${mType}" 
+        <button type="button" aria-label="${item.title}" class="studio-monitor-item type-${mType}"
              data-index="${i}" 
              data-service-id="${item.id}"
              style="transform: translate3d(${x}px, ${i * this.itemHeight}px, ${z}px) rotateY(${rotY}deg);">
           
           <div class="monitor-casing">
+            <div class="monitor-face monitor-front"></div>
+            <div class="monitor-face monitor-back"></div>
+            <div class="monitor-face monitor-side monitor-side-left"></div>
+            <div class="monitor-face monitor-side monitor-side-right"></div>
             <div class="monitor-bezel">
               <div class="monitor-screen-content">
                 <div class="monitor-number">${item.number}</div>
@@ -136,9 +141,8 @@ export class StudioExperience {
                 <div class="monitor-pill">${item.badge}</div>
               </div>
             </div>
-            <div class="monitor-brand">ITOM</div>
           </div>
-        </div>
+        </button>
       `;
     }).join('');
 
@@ -202,12 +206,17 @@ export class StudioExperience {
       if (this.isZoomed) return;
       const monitorEl = e.target.closest('.studio-monitor-item');
       if (!monitorEl) return;
+      if (Math.abs(this.targetScrollY - this.startScrollY) > 8 && e.detail !== 0) return;
 
       const serviceId = monitorEl.getAttribute('data-service-id');
       const service = this.services.find(s => s.id === serviceId);
       if (service) {
         this.zoomToService(service, monitorEl);
       }
+    });
+    document.getElementById('studioSpotlight').addEventListener('click', () => this.closeInspect());
+    window.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && this.isZoomed) this.closeInspect();
     });
 
     // Close button on torn-paper inspect card
@@ -224,12 +233,12 @@ export class StudioExperience {
       orderBtn.addEventListener('click', () => {
         soundEngine.playClick();
         if (window.corridorInstance && this.activeService) {
+          const serviceId = this.activeService.id;
           this.closeInspect();
-          if (window.closeCurrentRoom) window.closeCurrentRoom();
           window.corridorInstance.teleportToRoom('contact');
           setTimeout(() => {
-            if (window.selectServiceInQuote) window.selectServiceInQuote(this.activeService.id);
-          }, 600);
+            if (window.selectServiceInQuote) window.selectServiceInQuote(serviceId);
+          }, 850);
         }
       });
     }
@@ -262,6 +271,9 @@ export class StudioExperience {
 
     // Highlight clicked monitor
     monitorEl.classList.add('zoomed-target');
+    const selected = document.getElementById('studioSelectedMonitor');
+    selected.className = `studio-selected-monitor active ${Array.from(monitorEl.classList).find(name => name.startsWith('type-'))}`;
+    selected.innerHTML = monitorEl.innerHTML;
   }
 
   closeInspect() {
@@ -276,6 +288,7 @@ export class StudioExperience {
     if (spotlight) spotlight.classList.remove('active');
     if (inspectCard) inspectCard.classList.remove('active');
     if (bottomBanner) bottomBanner.style.opacity = '1';
+    document.getElementById('studioSelectedMonitor')?.classList.remove('active');
 
     const allZoomed = document.querySelectorAll('.studio-monitor-item.zoomed-target');
     allZoomed.forEach(el => el.classList.remove('zoomed-target'));
@@ -283,6 +296,10 @@ export class StudioExperience {
 
   startRenderLoop() {
     const loop = () => {
+      if (!this.container.classList.contains('active')) {
+        this.animationFrameId = requestAnimationFrame(loop);
+        return;
+      }
       // Smooth lerp scrolling
       this.scrollY += (this.targetScrollY - this.scrollY) * 0.1;
 
@@ -297,7 +314,7 @@ export class StudioExperience {
       }
 
       if (this.trackEl) {
-        this.trackEl.style.transform = `translate3d(0, ${-this.scrollY}px, 0) rotateY(${this.scrollY * 0.08}deg)`;
+        this.trackEl.style.transform = `translate3d(0, ${-this.scrollY}px, 0) rotateY(${this.scrollY * 0.08}deg) scale(0.55)`;
       }
 
       this.animationFrameId = requestAnimationFrame(loop);

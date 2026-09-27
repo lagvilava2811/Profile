@@ -104,8 +104,8 @@ export class GalleryExperience {
     this.cityBg = document.getElementById('galleryCityBg');
     this.rooftopsBg = document.getElementById('galleryRooftopsBg');
     this.modal = document.getElementById('galleryInspectModal');
-    this.cardWidth = 320;
-    this.gap = 40;
+    this.cardWidth = 190;
+    this.gap = 65;
     this.totalItemWidth = this.cardWidth + this.gap;
 
     this.renderHangingCards();
@@ -119,7 +119,7 @@ export class GalleryExperience {
     this.trackLength = this.projects.length * this.totalItemWidth;
 
     this.track.innerHTML = displayList.map((p, idx) => `
-      <div class="gallery-hanging-item" data-project-index="${idx % this.projects.length}">
+      <button type="button" aria-label="${p.title}" class="gallery-hanging-item" data-project-index="${idx % this.projects.length}">
         <!-- Clothespin Peg -->
         <div class="gallery-clothespin"></div>
         <!-- Sketched Hanging Frame -->
@@ -147,13 +147,13 @@ export class GalleryExperience {
             <span class="gallery-frame-cta">INSPECT ↗</span>
           </div>
         </div>
-      </div>
+      </button>
     `).join('');
 
     // Attach click listeners to each hanging card
     this.track.querySelectorAll('.gallery-hanging-item').forEach(el => {
       el.addEventListener('click', (e) => {
-        if (Math.abs(this.scrollX - this.startScrollX) > 8) return; // Prevent click on drag
+        if (this.dragDistance > 8 && e.detail !== 0) return;
         const idx = parseInt(el.getAttribute('data-project-index'), 10);
         this.openProjectModal(this.projects[idx]);
       });
@@ -166,6 +166,7 @@ export class GalleryExperience {
 
     // Mouse wheel horizontal scroll
     container.addEventListener('wheel', (e) => {
+      if (this.modal.classList.contains('active')) return;
       e.preventDefault();
       const delta = e.deltaY !== 0 ? e.deltaY : e.deltaX;
       this.targetScrollX += delta * 1.5;
@@ -175,6 +176,7 @@ export class GalleryExperience {
     container.addEventListener('mousedown', (e) => {
       if (e.target.closest('#galleryInspectModal') && this.modal.classList.contains('active')) return;
       this.isDragging = true;
+      this.dragDistance = 0;
       this.startX = e.clientX;
       this.startScrollX = this.targetScrollX;
       container.classList.add('is-dragging');
@@ -183,6 +185,7 @@ export class GalleryExperience {
     window.addEventListener('mousemove', (e) => {
       if (!this.isDragging) return;
       const dx = e.clientX - this.startX;
+      this.dragDistance = Math.abs(dx);
       this.targetScrollX = this.startScrollX - dx * 1.6;
     });
 
@@ -195,8 +198,10 @@ export class GalleryExperience {
 
     // Touch events for mobile
     container.addEventListener('touchstart', (e) => {
+      if (this.modal.classList.contains('active')) return;
       if (e.touches.length === 1) {
         this.isDragging = true;
+        this.dragDistance = 0;
         this.startX = e.touches[0].clientX;
         this.startScrollX = this.targetScrollX;
       }
@@ -205,6 +210,7 @@ export class GalleryExperience {
     container.addEventListener('touchmove', (e) => {
       if (!this.isDragging || e.touches.length !== 1) return;
       const dx = e.touches[0].clientX - this.startX;
+      this.dragDistance = Math.abs(dx);
       this.targetScrollX = this.startScrollX - dx * 1.8;
     }, { passive: true });
 
@@ -267,12 +273,12 @@ export class GalleryExperience {
 
     // Live link
     const linkBtn = document.getElementById('modalLiveLink');
-    if (project.link) {
+    if (project.link && project.link !== '#') {
       linkBtn.href = project.link;
       linkBtn.style.display = 'inline-flex';
     } else {
       linkBtn.href = '#';
-      linkBtn.style.display = 'inline-flex';
+      linkBtn.style.display = 'none';
     }
 
     this.modal.classList.add('active');
@@ -287,6 +293,10 @@ export class GalleryExperience {
 
   startLoop() {
     const loop = () => {
+      if (!this.container.classList.contains('active')) {
+        this.animationFrameId = requestAnimationFrame(loop);
+        return;
+      }
       // Smooth lerp scrolling
       this.scrollX += (this.targetScrollX - this.scrollX) * 0.12;
 

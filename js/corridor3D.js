@@ -16,13 +16,9 @@ export class Corridor3D {
     this.scene = null;
     this.renderer = null;
     
-    // Wide cinematic entrance view:
-    // Facade is at z = 22.0.
-    // Wide cinematic distance: targetDist = Math.max(10.5, 9.5 / aspect);
-    // On 16:9 desktop (aspect 1.78), targetDist = 10.5 => initialCameraZ = 32.5.
-    // On narrower screens, camera pulls back further so tree, window, and facade are fully framed.
+    // Fill the desktop viewport with the facade, retaining the doorway on phones.
     const aspect = (window.innerWidth || 1200) / (window.innerHeight || 800);
-    const targetDist = Math.max(10.5, 9.5 / aspect);
+    const targetDist = Math.max(6.0, 5.2 / aspect);
     this.initialCameraZ = 22.0 + targetDist;
     this.cameraZ = this.initialCameraZ;
     this.targetCameraZ = this.initialCameraZ;
@@ -176,7 +172,9 @@ export class Corridor3D {
     // A. აგურის ფასადის კედელი (Brick Facade Wall 16x8)
     const facadeGeo = new THREE.PlaneGeometry(16, 8);
     const facadeTex = this.loadTexture('assets/textures/entrance/wall_bricks_2.webp');
-    const facadeMat = new THREE.MeshBasicMaterial({ map: facadeTex, transparent: true, side: THREE.DoubleSide });
+    // Discard the doorway/window cutouts before writing depth. Otherwise the
+    // invisible wall pixels hide the door artwork and window frame behind them.
+    const facadeMat = new THREE.MeshBasicMaterial({ map: facadeTex, transparent: true, alphaTest: 0.1, side: THREE.DoubleSide });
     const facadeMesh = new THREE.Mesh(facadeGeo, facadeMat);
     facadeMesh.position.set(0, 2.25, 0.15);
     entranceGroup.add(facadeMesh);
@@ -283,9 +281,10 @@ export class Corridor3D {
         if (texColor.a < 0.1) discard;
 
         if (uProgress > 0.001) {
-          float rn = revealNoise(vUv * 15.0) * 0.15;
+          float rn = revealNoise(vec2(vUv.x * 14.0, 0.0)) * 0.22
+            + revealNoise(vUv * 45.0) * 0.025;
           float maskValue = (1.0 - vUv.y) + rn;
-          float threshold = uProgress * 1.5;
+          float threshold = uProgress * 1.25;
           if (maskValue < threshold) discard;
         }
 
@@ -298,7 +297,7 @@ export class Corridor3D {
     leftPivot.position.set(-Ae, -0.55, 0.0);
 
     // Physical Wooden Paper Base (No black void)
-    const pienMat = new THREE.MeshBasicMaterial({ color: 0xe0e0e0, map: pienTex, roughness: 0.9 });
+    const pienMat = new THREE.MeshBasicMaterial({ color: 0xe0e0e0, map: pienTex });
     const leftBaseMesh = new THREE.Mesh(doorBoxGeo, pienMat);
     leftBaseMesh.position.set(Ae / 2, 0, 0.06);
     leftBaseMesh.userData = { isEntranceDoor: true };
@@ -451,12 +450,15 @@ export class Corridor3D {
 
     // Hanging mouse under tree branch
     const mousePivot = new THREE.Group();
-    mousePivot.position.set(-2.56, 0.51, 1.0);
+    mousePivot.position.set(-2.56, -0.45, 1.3);
     const mouseTex = this.loadTexture('assets/textures/entrance/mouse_hanging.webp');
-    const mouseGeo = new THREE.PlaneGeometry(1.2, 1.6);
+    // The drawing occupies a small region of a transparent 1024px atlas.
+    mouseTex.repeat.set(0.11, 0.23);
+    mouseTex.offset.set(0.535, 0.20);
+    const mouseGeo = new THREE.PlaneGeometry(0.72, 1.6);
     const mouseMat = new THREE.MeshBasicMaterial({ map: mouseTex, transparent: true, side: THREE.DoubleSide, depthWrite: false });
     const mouseMesh = new THREE.Mesh(mouseGeo, mouseMat);
-    mouseMesh.position.set(-0.35, 0.45, 0);
+    mouseMesh.position.set(0, 0, 0);
     mousePivot.add(mouseMesh);
     entranceGroup.add(mousePivot);
     this.hangingMouse = mousePivot;
@@ -495,6 +497,7 @@ export class Corridor3D {
     const winFrameMesh = new THREE.Mesh(winFrameGeo, winFrameMat);
     winFrameMesh.position.set(2.5, 0, 0.1);
     winFrameMesh.userData = { isWindowHoverable: true };
+    this.windowFrameMesh = winFrameMesh;
     entranceGroup.add(winFrameMesh);
 
     // Avatar boy peeking from window (avatar_window.webp)
@@ -557,17 +560,19 @@ export class Corridor3D {
   // 2. CORRIDOR GEOMETRY (Hallway, Paper Floor, Walls, Ceiling)
   // =========================================================================
   buildCorridor() {
-    const corridorLength = 42;
+    const corridorLength = 52;
     const corridorWidth = 7.0; // Matches itomdev hallway width
     const corridorHeight = 3.5;
 
     // A. იატაკი (Floor)
     const floorGeo = new THREE.PlaneGeometry(corridorWidth, corridorLength);
     const floorTex = this.loadTexture('assets/textures/corridor/kawalekpodlogi.webp', 3, 16);
+    floorTex.center.set(0.5, 0.5);
+    floorTex.rotation = Math.PI / 2;
     const floorMat = new THREE.MeshBasicMaterial({ map: floorTex, side: THREE.DoubleSide });
     const floorMesh = new THREE.Mesh(floorGeo, floorMat);
     floorMesh.rotation.x = -Math.PI / 2;
-    floorMesh.position.set(0, -1.75, -9);
+    floorMesh.position.set(0, -1.75, -4);
     this.scene.add(floorMesh);
 
     // B. ჭერი (Ceiling)
@@ -576,7 +581,7 @@ export class Corridor3D {
     const ceilMat = new THREE.MeshBasicMaterial({ map: ceilTex, side: THREE.DoubleSide });
     const ceilMesh = new THREE.Mesh(ceilGeo, ceilMat);
     ceilMesh.rotation.x = Math.PI / 2;
-    ceilMesh.position.set(0, 1.75, -9);
+    ceilMesh.position.set(0, 1.75, -4);
     this.scene.add(ceilMesh);
 
     // C. მარცხენა კედელი (Left Wall)
@@ -585,7 +590,7 @@ export class Corridor3D {
     const wallMatLeft = new THREE.MeshBasicMaterial({ map: wallTexLeft, side: THREE.DoubleSide });
     const leftWall = new THREE.Mesh(leftWallGeo, wallMatLeft);
     leftWall.rotation.y = Math.PI / 2;
-    leftWall.position.set(-corridorWidth / 2, 0, -9);
+    leftWall.position.set(-corridorWidth / 2, 0, -4);
     this.scene.add(leftWall);
 
     // D. მარჯვენა კედელი (Right Wall)
@@ -594,7 +599,7 @@ export class Corridor3D {
     const wallMatRight = new THREE.MeshBasicMaterial({ map: wallTexRight, side: THREE.DoubleSide });
     const rightWall = new THREE.Mesh(rightWallGeo, wallMatRight);
     rightWall.rotation.y = -Math.PI / 2;
-    rightWall.position.set(corridorWidth / 2, 0, -9);
+    rightWall.position.set(corridorWidth / 2, 0, -4);
     this.scene.add(rightWall);
 
     // E. ბოლო კედელი (Back Wall)
@@ -1049,7 +1054,7 @@ export class Corridor3D {
     const frameGeo = new THREE.PlaneGeometry(1.65, 2.65);
     const frameMat = new THREE.MeshBasicMaterial({ map: frameTex, transparent: true, side: THREE.DoubleSide });
     const frameMesh = new THREE.Mesh(frameGeo, frameMat);
-    frameMesh.position.set(0, 0, -0.01);
+    frameMesh.position.set(0, 0, 0.012);
     doorGroup.add(frameMesh);
 
     // Hinge Pivot — positioned at left edge of door, swings outward into corridor
@@ -1066,6 +1071,20 @@ export class Corridor3D {
       side: THREE.DoubleSide,
       depthWrite: false
     });
+    const paintProgress = { value: 0 };
+    doorMat.onBeforeCompile = (shader) => {
+      shader.uniforms.paintMap = { value: texPainted };
+      shader.uniforms.paintProgress = paintProgress;
+      shader.fragmentShader = 'uniform sampler2D paintMap;\nuniform float paintProgress;\n' + shader.fragmentShader;
+      shader.fragmentShader = shader.fragmentShader.replace('#include <map_fragment>', `
+        vec4 sketch = mapTexelToLinear(texture2D(map, vUv));
+        vec4 painted = mapTexelToLinear(texture2D(paintMap, vUv));
+        float drips = 0.09 * sin(vUv.x * 37.0) + 0.04 * sin(vUv.x * 83.0);
+        float edge = (1.0 - vUv.y) + drips;
+        float fill = smoothstep(edge - 0.012, edge + 0.012, paintProgress * 1.3 - 0.15);
+        diffuseColor *= mix(sketch, painted, fill);
+      `);
+    };
     const doorMesh = new THREE.Mesh(new THREE.PlaneGeometry(doorW, doorH), doorMat);
     doorMesh.position.set(doorW / 2, 0, 0);
     hingePivot.add(doorMesh);
@@ -1085,6 +1104,7 @@ export class Corridor3D {
     doorGroup.add(hingePivot);
 
     doorMesh.userData = {
+      paintProgress,
       id: conf.id,
       name: `${conf.name} (${conf.geoTitle})`,
       doorGroup: doorGroup,
@@ -1215,7 +1235,7 @@ export class Corridor3D {
       }
 
       this.targetCameraZ -= e.deltaY * 0.012;
-      this.targetCameraZ = Math.max(this.minZ, Math.min(11.0, this.targetCameraZ));
+      this.targetCameraZ = Math.max(this.minZ, Math.min(14.5, this.targetCameraZ));
       soundEngine.playPencilScratch();
     }, { passive: true });
 
@@ -1233,11 +1253,12 @@ export class Corridor3D {
       touchStartY = e.touches[0].clientY;
 
       this.targetCameraZ += deltaY * 0.03;
-      this.targetCameraZ = Math.max(this.minZ, Math.min(11.0, this.targetCameraZ));
+      this.targetCameraZ = Math.max(this.minZ, Math.min(14.5, this.targetCameraZ));
     }, { passive: true });
 
     // 3. Keyboard Arrow Keys / WASD
     window.addEventListener('keydown', (e) => {
+      if (e.target.closest('button, a, input, textarea, select') || document.querySelector('.map-modal-backdrop.active')) return;
       if (this.isInsideRoom || this.isTransitioning) return;
       if (!this.isEntranceOpen) {
         if (e.key === 'Enter' || e.key === ' ') {
@@ -1249,7 +1270,7 @@ export class Corridor3D {
         this.targetCameraZ = Math.max(this.minZ, this.targetCameraZ - 1.5);
         soundEngine.playPencilScratch();
       } else if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') {
-        this.targetCameraZ = Math.min(11.0, this.targetCameraZ + 1.5);
+        this.targetCameraZ = Math.min(14.5, this.targetCameraZ + 1.5);
         soundEngine.playPencilScratch();
       }
     });
@@ -1278,6 +1299,8 @@ export class Corridor3D {
         return;
       }
 
+      this.mouse.set((e.clientX / window.innerWidth) * 2 - 1, -(e.clientY / window.innerHeight) * 2 + 1);
+      this.checkRaycast();
       this.raycaster.setFromCamera(this.mouse, this.camera);
 
       // Check Duck Pot clicked
@@ -1324,7 +1347,7 @@ export class Corridor3D {
 
       // If at entrance, adjust camera framing so facade fits properly
       if (!this.isEntranceOpen) {
-        const targetDist = Math.max(10.5, 9.5 / this.camera.aspect);
+        const targetDist = Math.max(6.0, 5.2 / this.camera.aspect);
         this.initialCameraZ = 22.0 + targetDist;
         this.cameraZ = this.initialCameraZ;
         this.targetCameraZ = this.initialCameraZ;
@@ -1352,7 +1375,7 @@ export class Corridor3D {
     const startZ = this.camera.position.z;
     const targetX = 0;
     const targetY = 0.25;
-    const targetZ = 11.0; // Corridor start viewing point
+    const targetZ = 14.5; // Leave breathing room around the inner doorway.
 
     const animateOpen = (now) => {
       const p = Math.min((now - startTime) / duration, 1);
@@ -1405,7 +1428,8 @@ export class Corridor3D {
     // 1. Entrance Area Hover
     if (!this.isEntranceOpen) {
       // Check Window hover -> Avatar boy peeks out!
-      if (this.mouse.x > 0.15 && this.mouse.x < 0.65 && this.mouse.y > -0.3 && this.mouse.y < 0.4) {
+      this.isEntranceHovered = false;
+      if (this.windowFrameMesh && this.raycaster.intersectObject(this.windowFrameMesh).length) {
         this.targetAvatarWinX = 2.5; // Peeks out into window
       } else {
         this.targetAvatarWinX = 3.5; // Slides back behind wall
@@ -1466,8 +1490,7 @@ export class Corridor3D {
           }
         }
         this.hoveredDoor = hitDoor;
-        this.hoveredDoor.material.map = this.hoveredDoor.userData.texPainted;
-        this.hoveredDoor.material.needsUpdate = true;
+        // The shader reveals the painted texture progressively in animate().
 
         // Crack door open outward into corridor on hover
         if (hitDoor.userData.hingePivot) hitDoor.userData.hingePivot.rotation.y = -0.2;
@@ -1622,6 +1645,8 @@ export class Corridor3D {
     requestAnimationFrame(this.animate);
 
     const now = performance.now();
+    const delta = Math.min((now - (this.previousAnimationTime || now)) / 1000, 0.05);
+    this.previousAnimationTime = now;
     const clockTime = now * 0.001;
 
     // A. Entrance Wind & Gentle Motion
@@ -1660,7 +1685,9 @@ export class Corridor3D {
       const targetCrack = this.isEntranceHovered ? 0.08 : 0.0;
       const targetTilt = this.isEntranceHovered ? 0.15 : 0.0;
 
-      this.entranceRevealProgress += (targetReveal - this.entranceRevealProgress) * 0.09;
+      const revealStep = delta / 1.15;
+      this.entranceRevealProgress += Math.sign(targetReveal - this.entranceRevealProgress)
+        * Math.min(Math.abs(targetReveal - this.entranceRevealProgress), revealStep);
       this.entranceDoorCrack += (targetCrack - this.entranceDoorCrack) * 0.12;
       this.entranceHandleTilt += (targetTilt - this.entranceHandleTilt) * 0.15;
 
@@ -1678,6 +1705,13 @@ export class Corridor3D {
       if (this.leftEntrancePivot) this.leftEntrancePivot.rotation.y = -this.entranceDoorCrack;
       if (this.rightEntrancePivot) this.rightEntrancePivot.rotation.y = this.entranceDoorCrack;
     }
+
+    this.doors.forEach(door => {
+      const progress = door.userData.paintProgress;
+      const target = door === this.hoveredDoor ? 1 : 0;
+      if (progress) progress.value += Math.sign(target - progress.value)
+        * Math.min(Math.abs(target - progress.value), delta / 1.15);
+    });
 
     // B. Corridor 20 FPS Flipbook Animation (frames 0 to 8 ping-pong loop at 50ms interval)
     if (this.avatarTextures && this.avatarTextures.length === 9 && this.corridorAvatarMesh) {

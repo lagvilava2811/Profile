@@ -1,7 +1,7 @@
 // js/main.js
 // მთავარი აპლიკაციის ორკესტრატორი და ინიციალიზატორი (itomdev 3D გამოცდილება)
 
-import { Corridor3D } from './corridor3D.js?v=20260917_11';
+import { Corridor3D } from './corridor3D.js?v=20260927_02';
 import { soundEngine } from './components/audioManager.js';
 import { initCustomCursor } from './components/cursor.js';
 import { initScrollReveal } from './components/scrollReveal.js';
@@ -13,10 +13,10 @@ import { initBeforeAfter } from './components/beforeAfter.js';
 import { initAIDemo } from './components/aiDemo.js';
 import { servicesData } from './data/services.js';
 import { projectsData } from './data/projects.js';
-import { GalleryExperience } from './components/galleryExperience.js?v=20260917_11';
-import { StudioExperience } from './components/studioExperience.js?v=20260917_11';
-import { AboutExperience } from './components/aboutExperience.js?v=20260917_11';
-import { ContactExperience } from './components/contactExperience.js?v=20260917_11';
+import { GalleryExperience } from './components/galleryExperience.js?v=20260927_02';
+import { StudioExperience } from './components/studioExperience.js?v=20260927_02';
+import { AboutExperience } from './components/aboutExperience.js?v=20260927_02';
+import { ContactExperience } from './components/contactExperience.js?v=20260927_02';
 
 let galleryExp = null;
 let studioExp = null;
@@ -172,6 +172,7 @@ function setupRoomNavigation(corridor) {
     Object.values(roomMap).forEach(el => el && el.classList.remove('active'));
     const targetEl = roomMap[roomId];
     if (targetEl) {
+      document.body.classList.add('in-room');
       targetEl.classList.add('active');
       targetEl.scrollTop = 0;
       if (backBtn) backBtn.classList.add('visible');
@@ -192,6 +193,7 @@ function setupRoomNavigation(corridor) {
   };
 
   window.closeCurrentRoom = function() {
+    document.body.classList.remove('in-room');
     Object.values(roomMap).forEach(el => el && el.classList.remove('active'));
     if (backBtn) backBtn.classList.remove('visible');
     if (hintBadge) hintBadge.style.opacity = '1';
@@ -229,6 +231,7 @@ function selectServiceInQuote(serviceType) {
     }
   }
 }
+window.selectServiceInQuote = selectServiceInQuote;
 
 // Paper Tear Preloader
 function initPaperTearPreloader() {
